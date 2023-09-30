@@ -5,7 +5,7 @@ import {IL2OutputOracle} from "./IL2OutputOracle.sol";
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {ERC6551Registry} from "erc6551/ERC6551Registry.sol";
 
-abstract contract ProposerManager is ERC721 {
+contract ProposerManager is ERC721 {
     address public immutable L2_OUTPUT_ORACLE;
 
     address public immutable ERC6551_REGISTRY;
