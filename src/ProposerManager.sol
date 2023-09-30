@@ -46,15 +46,16 @@ contract ProposerManager is ERC721 {
         );
     }
 
-    function acquireProposer() public payable virtual returns (uint256 tokenId, address account) {
-        _mint(msg.sender, tokenId = totalMinted++);
+    function acquireProposer() public payable virtual returns (uint256, address) {
+        totalMinted++;
+        _mint(msg.sender, totalMinted);
 
-        account = ERC6551Registry(ERC6551_REGISTRY).createAccount(
-            PROPOSER_ACCOUNT_IMPL, block.chainid, address(this), tokenId, 0, ""
+        address account = ERC6551Registry(ERC6551_REGISTRY).createAccount(
+            PROPOSER_ACCOUNT_IMPL, block.chainid, address(this), totalMinted, 0, ""
         );
 
-        emit ProposerAcquired(msg.sender, tokenId, account);
+        emit ProposerAcquired(msg.sender, totalMinted, account);
 
-        return (tokenId, account);
+        return (totalMinted, account);
     }
 }
