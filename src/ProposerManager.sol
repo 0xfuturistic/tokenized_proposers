@@ -28,7 +28,7 @@ contract ProposerManager is ERC721 {
         external
         payable
     {
-        require(msg.sender == getProposer(), "NOT_PROPOSER");
+        require(msg.sender == getNextProposer(), "NOT_PROPOSER");
 
         IL2OutputOracle(L2_OUTPUT_ORACLE).proposeL2Output{value: msg.value}(
             _outputRoot, _l2BlockNumber, _l1BlockHash, _l1BlockNumber
@@ -36,7 +36,7 @@ contract ProposerManager is ERC721 {
     }
 
     /// @notice this should return the account of the next proposer
-    function getProposer() public view returns (address) {
+    function getNextProposer() public view returns (address) {
         return ERC6551Registry(ERC6551_REGISTRY).account(
             PROPOSER_ACCOUNT_IMPL,
             block.chainid,
@@ -47,7 +47,7 @@ contract ProposerManager is ERC721 {
     }
 
     function acquireProposer() public payable virtual returns (uint256 tokenId, address account) {
-        _mint(msg.sender, tokenId = totalMinted++); // todo: check if this is correct
+        _mint(msg.sender, tokenId = totalMinted++);
 
         account = ERC6551Registry(ERC6551_REGISTRY).createAccount(
             PROPOSER_ACCOUNT_IMPL, block.chainid, address(this), tokenId, 0, ""
