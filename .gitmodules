@@ -7,3 +7,6 @@
 [submodule "lib/VRGDAs"]
 	path = lib/VRGDAs
 	url = https://github.com/transmissions11/VRGDAs
+[submodule "lib/solmate"]
+	path = lib/solmate
+	url = https://github.com/transmissions11/solmate
