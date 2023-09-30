@@ -27,11 +27,12 @@ contract VRGDA is ProposerManager, LinearVRGDA {
 
             require(msg.value >= price, "UNDERPAID"); // Don't allow underpaying.
 
+            super.acquireProposer();
+
             // Note: We do this at the end to avoid creating a reentrancy vector.
             // Refund the user any ETH they spent over the current price of the NFT.
             // Unchecked is safe here because we validate msg.value >= price above.
             SafeTransferLib.safeTransferETH(msg.sender, msg.value - price);
         }
-        super.acquireProposer();
     }
 }
