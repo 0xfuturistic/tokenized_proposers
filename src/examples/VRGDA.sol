@@ -7,8 +7,6 @@ import {toDaysWadUnsafe} from "solmate/utils/SignedWadMath.sol";
 import {LinearVRGDA} from "VRGDAs/LinearVRGDA.sol";
 
 contract VRGDA is ProposerManager, LinearVRGDA {
-    uint256 public totalSold; // The total number of tokens sold so far.
-
     uint256 public immutable startTime = block.timestamp; // When VRGDA sales begun.
 
     constructor(address l2OutputOracle, address erc6551Registry, address proposerAccountImpl)
@@ -23,7 +21,7 @@ contract VRGDA is ProposerManager, LinearVRGDA {
     function acquireProposer() public payable override returns (uint256 tokenId) {
         unchecked {
             // Note: By using toDaysWadUnsafe(block.timestamp - startTime) we are establishing that 1 "unit of time" is 1 day.
-            uint256 price = getVRGDAPrice(toDaysWadUnsafe(block.timestamp - startTime), tokenId = totalSold++);
+            uint256 price = getVRGDAPrice(toDaysWadUnsafe(block.timestamp - startTime), totalMinted + 1);
 
             require(msg.value >= price, "UNDERPAID"); // Don't allow underpaying.
 
