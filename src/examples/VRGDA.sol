@@ -18,14 +18,14 @@ contract VRGDA is ProposerManager, LinearVRGDA {
         )
     {}
 
-    function acquireProposer() public payable override returns (uint256 tokenId) {
+    function acquireProposer() public payable override returns (uint256 tokenId, address account) {
         unchecked {
             // Note: By using toDaysWadUnsafe(block.timestamp - startTime) we are establishing that 1 "unit of time" is 1 day.
             uint256 price = getVRGDAPrice(toDaysWadUnsafe(block.timestamp - startTime), totalMinted + 1);
 
             require(msg.value >= price, "UNDERPAID"); // Don't allow underpaying.
 
-            tokenId = super.acquireProposer();
+            (tokenId, account) = super.acquireProposer();
 
             // Note: We do this at the end to avoid creating a reentrancy vector.
             // Refund the user any ETH they spent over the current price of the NFT.

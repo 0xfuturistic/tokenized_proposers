@@ -14,7 +14,7 @@ contract ProposerManager is ERC721 {
 
     uint256 public totalMinted;
 
-    event ProposerAcquired(address indexed acquirer, uint256 indexed tokenId);
+    event ProposerAcquired(address indexed buyer, uint256 indexed tokenId, address indexed account);
 
     constructor(address l2OutputOracle, address erc6551Registry, address proposerAccountImpl)
         ERC721("MyToken", "MTK")
@@ -46,15 +46,15 @@ contract ProposerManager is ERC721 {
         );
     }
 
-    function acquireProposer() public payable virtual returns (uint256 tokenId) {
+    function acquireProposer() public payable virtual returns (uint256 tokenId, address account) {
         _mint(msg.sender, tokenId = totalMinted++); // todo: check if this is correct
 
-        ERC6551Registry(ERC6551_REGISTRY).createAccount(
+        account = ERC6551Registry(ERC6551_REGISTRY).createAccount(
             PROPOSER_ACCOUNT_IMPL, block.chainid, address(this), tokenId, 0, ""
         );
 
-        emit ProposerAcquired(msg.sender, tokenId);
+        emit ProposerAcquired(msg.sender, tokenId, account);
 
-        return tokenId;
+        return (tokenId, account);
     }
 }
