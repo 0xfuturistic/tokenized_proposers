@@ -14,6 +14,8 @@ contract ProposerManager is ERC721 {
 
     uint256 public totalMinted;
 
+    event ProposerAcquired(address indexed acquirer, uint256 indexed tokenId);
+
     constructor(address l2OutputOracle, address erc6551Registry, address proposerAccountImpl)
         ERC721("MyToken", "MTK")
     {
@@ -50,5 +52,9 @@ contract ProposerManager is ERC721 {
         ERC6551Registry(ERC6551_REGISTRY).createAccount(
             PROPOSER_ACCOUNT_IMPL, block.chainid, address(this), tokenId, 0, ""
         );
+
+        emit ProposerAcquired(msg.sender, tokenId);
+
+        return tokenId;
     }
 }
