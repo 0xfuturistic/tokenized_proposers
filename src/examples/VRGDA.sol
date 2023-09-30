@@ -25,7 +25,7 @@ contract VRGDA is ProposerManager, LinearVRGDA {
 
             require(msg.value >= price, "UNDERPAID"); // Don't allow underpaying.
 
-            super.acquireProposer();
+            tokenId = super.acquireProposer();
 
             // Note: We do this at the end to avoid creating a reentrancy vector.
             // Refund the user any ETH they spent over the current price of the NFT.
