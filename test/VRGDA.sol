@@ -8,6 +8,6 @@ contract VRGDATest is Test {
     VRGDA public vrgda;
 
     function setUp() public {
-        vrgda = new VRGDA(address(0));
+        vrgda = new VRGDA(address(0), address(0), address(0));
     }
 }
