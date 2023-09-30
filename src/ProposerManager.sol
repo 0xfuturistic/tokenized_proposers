@@ -3,24 +3,52 @@ pragma solidity ^0.8.15;
 
 import {IL2OutputOracle} from "./IL2OutputOracle.sol";
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import {ERC6551Registry} from "erc6551/ERC6551Registry.sol";
 
 abstract contract ProposerManager is ERC721 {
-    IL2OutputOracle public immutable l2OutputOracle; // The L2 output oracle.
+    address public immutable L2_OUTPUT_ORACLE;
 
-    constructor(address l2OutputOracleAddr) ERC721("MyToken", "MTK") {
-        l2OutputOracle = IL2OutputOracle(l2OutputOracleAddr);
+    address public immutable ERC6551_REGISTRY;
+
+    address public immutable PROPOSER_ACCOUNT_IMPL;
+
+    uint256 public totalMinted;
+
+    constructor(address l2OutputOracle, address erc6551Registry, address proposerAccountImpl)
+        ERC721("MyToken", "MTK")
+    {
+        L2_OUTPUT_ORACLE = l2OutputOracle;
+        ERC6551_REGISTRY = erc6551Registry;
+        PROPOSER_ACCOUNT_IMPL = proposerAccountImpl;
     }
 
     function proposeL2Output(bytes32 _outputRoot, uint256 _l2BlockNumber, bytes32 _l1BlockHash, uint256 _l1BlockNumber)
         external
         payable
     {
-        l2OutputOracle.proposeL2Output{value: msg.value}(_outputRoot, _l2BlockNumber, _l1BlockHash, _l1BlockNumber);
+        require(msg.sender == getProposer(), "NOT_PROPOSER");
+
+        IL2OutputOracle(L2_OUTPUT_ORACLE).proposeL2Output{value: msg.value}(
+            _outputRoot, _l2BlockNumber, _l1BlockHash, _l1BlockNumber
+        );
     }
 
-    function acquireProposer() external virtual returns (uint256 id);
+    /// @notice this should return the account of the next proposer
+    function getProposer() public view returns (address) {
+        return ERC6551Registry(ERC6551_REGISTRY).account(
+            PROPOSER_ACCOUNT_IMPL,
+            block.chainid,
+            address(this),
+            IL2OutputOracle(L2_OUTPUT_ORACLE).latestOutputIndex() + 1,
+            0
+        );
+    }
 
-    function tokenURI(uint256) public pure override returns (string memory) {
-        return "https://example.com";
+    function acquireProposer() public payable virtual returns (uint256 tokenId) {
+        _mint(msg.sender, tokenId = totalMinted++); // todo: check if this is correct
+
+        ERC6551Registry(ERC6551_REGISTRY).createAccount(
+            PROPOSER_ACCOUNT_IMPL, block.chainid, address(this), tokenId, 0, ""
+        );
     }
 }
