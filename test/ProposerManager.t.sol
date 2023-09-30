@@ -29,13 +29,13 @@ contract ProposerManagerTest is Test {
     }
 
     function test_getNextProposer() public {
-        (, address account1) = manager.acquireProposer();
+        (, address account) = manager.acquireProposer();
 
-        assertEq(manager.getNextProposer(), account1);
+        assertEq(manager.getNextProposer(), account);
 
         manager.acquireProposer();
 
-        assertEq(manager.getNextProposer(), account1);
+        assertEq(manager.getNextProposer(), account);
     }
 
     function test_proposeL2Output(
