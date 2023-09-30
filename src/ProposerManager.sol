@@ -7,10 +7,6 @@ import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 abstract contract ProposerManager is ERC721 {
     IL2OutputOracle public immutable l2OutputOracle; // The L2 output oracle.
 
-    uint256 public totalSold; // The total number of tokens sold so far.
-
-    uint256 public immutable startTime = block.timestamp; // When VRGDA sales begun.
-
     constructor(address l2OutputOracleAddr) ERC721("MyToken", "MTK") {
         l2OutputOracle = IL2OutputOracle(l2OutputOracleAddr);
     }
